@@ -3,9 +3,10 @@
 #include <unordered_map>
 #include <vector>
 #include <iomanip>
+using namespace std;
 
 // Register mapping
-std::unordered_map<std::string, int> registers = {
+unordered_map<std::string, int> registers = {
     {"A", 0b000},
     {"B", 0b001},
     {"C", 0b010},
@@ -14,7 +15,7 @@ std::unordered_map<std::string, int> registers = {
 };
 
 // Opcodes mapping
-std::unordered_map<std::string, int> opcodes = {
+unordered_map<string, int> opcodes = {
     {"ADD", 0b00},
     {"MOVE", 0b01},
     {"STORE", 0b01},
@@ -26,17 +27,17 @@ std::unordered_map<std::string, int> opcodes = {
 };
 
 // Helper function to convert int to hex
-std::string intToHex(int value, int width = 2) {
-    std::stringstream ss;
-    ss << std::setfill('0') << std::setw(width) << std::hex << value;
+string intToHex(int value, int width = 2) {
+    stringstream ss;
+    ss << setfill('0') << setw(width) << hex << value;
     return ss.str();
 }
 
 // Parse and process the command
-std::vector<std::string> parseCommand(const std::string &command) {
-    std::vector<std::string> tokens;
-    std::istringstream stream(command);
-    std::string token;
+vector<string> parseCommand(const string &command) {
+    vector<string> tokens;
+    istringstream stream(command);
+    string token;
     while (stream >> token) {
         tokens.push_back(token);
     }
@@ -44,8 +45,8 @@ std::vector<std::string> parseCommand(const std::string &command) {
 }
 
 // Function to process the ADD and MOVE instructions
-std::string processInstruction(const std::vector<std::string>& tokens) {
-    std::string instruction = tokens[0];
+string processInstruction(const vector<string>& tokens) {
+    string instruction = tokens[0];
     if (opcodes.find(instruction) == opcodes.end()) {
         return "Invalid Instruction";
     }
@@ -54,8 +55,8 @@ std::string processInstruction(const std::vector<std::string>& tokens) {
     if (instruction == "ADD" || instruction == "MOVE") {
         if (tokens.size() != 3) return "Invalid Instruction Format";
 
-        std::string destReg = tokens[1];
-        std::string srcOrVal = tokens[2];
+        string destReg = tokens[1];
+        string srcOrVal = tokens[2];
 
         if (registers.find(destReg) == registers.end()) return "Invalid Destination Register";
 
@@ -68,7 +69,7 @@ std::string processInstruction(const std::vector<std::string>& tokens) {
             instrCode = (opcode << 6) | (destRegCode << 3) | srcRegCode;
             return intToHex(instrCode);
         } else { // ADD/MOVE with value
-            int value = std::stoi(srcOrVal);
+            int value = stoi(srcOrVal);
             instrCode = (opcode << 6) | (destRegCode << 3) | 0b101;
             return intToHex(instrCode) + " " + intToHex(value);
         }
@@ -83,18 +84,18 @@ std::string processInstruction(const std::vector<std::string>& tokens) {
 }
 
 int main() {
-    std::string input;
-    std::cout << "Enter assembly command: ";
-    std::getline(std::cin, input);
+    string input;
+    cout << "Enter assembly command: ";
+    getline(cin, input);
 
-    std::vector<std::string> tokens = parseCommand(input);
+    vector<string> tokens = parseCommand(input);
     if (tokens.empty()) {
-        std::cerr << "Invalid command" << std::endl;
+        cerr << "Invalid command" << endl;
         return 1;
     }
 
-    std::string result = processInstruction(tokens);
-    std::cout << "Hexadecimal: " << result << std::endl;
+    string result = processInstruction(tokens);
+    cout << "Hexadecimal: " << result << endl;
 
     return 0;
 }
